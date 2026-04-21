@@ -42,7 +42,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     user = update.message.from_user
     logger.info(f"✅ Пользователь {user.first_name} (@{user.username}) запустил бота")
-   
+    
     keyboard = [
         [KeyboardButton("Привет"), KeyboardButton("Пока")],
         [KeyboardButton("Анкета")]
@@ -52,9 +52,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Inline клавиатура
 async def inline_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    
-    
-    
     keyboard = [
         [InlineKeyboardButton("Кнопка 1", callback_data="btn1")],
         [InlineKeyboardButton("Кнопка 2", callback_data="btn2")]
@@ -106,20 +103,20 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("Не понимаю :(")
 
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.message.from_user
-    logger.info(f"✅ Пользователь {user.first_name} (@{user.username}) запустил бота")
+#async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#    
+#    user = update.message.from_user
+#    logger.info(f"✅ Пользователь {user.first_name} (@{user.username}) запустил бота")
     
     # Сохраняем информацию о пользователе
-    context.user_data['start_time'] = datetime.now()
-    context.user_data['user_id'] = user.id
+#    context.user_data['start_time'] = datetime.now()
+#    context.user_data['user_id'] = user.id
     
-    keyboard = [
-        [InlineKeyboardButton("Нажми меня", callback_data="button_clicked")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Привет! Нажми на кнопку:", reply_markup=reply_markup)
+#    keyboard = [
+#        [InlineKeyboardButton("Нажми меня", callback_data="button_clicked")]
+#    ]
+#    reply_markup = InlineKeyboardMarkup(keyboard)
+#    await update.message.reply_text("Привет! Нажми на кнопку:", reply_markup=reply_markup)
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -175,6 +172,7 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Произошла ошибка. Администратор уже уведомлён.")
 
 def main():
+    
     app = Application.builder().token(TOKEN).build()
     
     # Обработчик анкеты
@@ -197,6 +195,7 @@ def main():
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("stats", stats_command))
     app.add_handler(CallbackQueryHandler(button_handler))
+    app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, track_new_user))
  
     # Глобальный обработчик ошибок
     app.add_error_handler(error_handler)
@@ -204,6 +203,7 @@ def main():
     # Логируем запуск бота
     logger.info("🚀 Бот успешно запущен!")
     logger.info(f"📅 Время запуска: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
     app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
